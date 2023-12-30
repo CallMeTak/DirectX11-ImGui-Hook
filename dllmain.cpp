@@ -292,7 +292,7 @@ namespace Util {
 
 BOOL WINAPI HookThread(HMODULE hModule) {
     using namespace std::chrono_literals;
-
+    bool unload = false;
     uintptr_t present = Util::GetPresent();
     Util::CreateConsoleWindow();
     std::cout << "Injected.\n";
@@ -308,7 +308,7 @@ BOOL WINAPI HookThread(HMODULE hModule) {
     // Unloads dll if END is pressed
     while (true) {
         std::this_thread::sleep_for(1ms);
-        if (GetAsyncKeyState(VK_END) & 1) {
+        if ((GetAsyncKeyState(VK_END) & 1) || unload) {
             // Restores the original WndProc address
             Hooks::RestoreWndProc();
             // Removes D3D11 Present Hook
